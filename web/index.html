@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>olsbox-gui</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #1a1a1e; }
+    canvas { width: 100%; height: 100%; display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="app_canvas"></canvas>
+  <script type="module">
+    import __wbg_init, { WebHandle } from "./pkg/egui_wasm_workers.js";
+
+    await __wbg_init();
+
+    const handle = new WebHandle();
+    const canvas = document.getElementById("app_canvas");
+    await handle.start(canvas);
+  </script>
+  <!-- engine_worker.js (module worker) is spawned by the Rust side -->
+</body>
+</html>

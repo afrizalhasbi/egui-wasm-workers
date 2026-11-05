@@ -1,0 +1,7 @@
+[package]
+name = "engine"
+version = "0.1.0"
+edition = "2024"
+
+# Pure Rust, zero dependencies, must build for both native and wasm32.
+[dependencies]

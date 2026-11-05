@@ -1,0 +1,61 @@
+[workspace]
+members = ["engine"]
+resolver = "2"
+
+[package]
+name = "egui-wasm-workers"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "egui_wasm_workers"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "egui-wasm-workers"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.37.0", default-features = false, features = [
+    "glow",
+    "accesskit",
+    "clipboard",
+    "default_fonts",
+    "links",
+    "system_fonts",
+    "wayland",
+    "web_screen_reader",
+    "x11",
+] }
+egui = "0.37.0"
+egui_dnd = "0.18.0"
+engine = { path = "engine" }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3.107", features = ["Worker", "WorkerOptions", "WorkerType", "HtmlCanvasElement"] }
+
+# Data-parallel job via rayon. Native only: wasm32 atomics require a nightly
+# toolchain with build-std, so the wasm build stays on stable and runs the
+# serial path (the panel reports this instead of failing).
+[features]
+default = ["parallel"]
+parallel = ["dep:rayon"]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rayon = { version = "1", optional = true }
+
+[profile.release]
+opt-level = "z"      # optimize for size
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"
+
+[profile.dev]
+opt-level = 0
+debug = "line-tables-only"
+incremental = true
+
+[profile.dev.package."*"]
+opt-level = 0
